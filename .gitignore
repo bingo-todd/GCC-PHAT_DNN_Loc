@@ -1,0 +1,6 @@
+models/
+__pycache__/
+norm_params/
+pre_result/
+*.wav
+
