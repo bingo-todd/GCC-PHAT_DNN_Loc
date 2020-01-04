@@ -1,11 +1,26 @@
-## GCC-PHAT based DNN localization method
+# GCC-PHAT based DNN localization method
+
 baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM*[^Vecchiotti_2019]
 
-### The influence of windows in GCC-PHAT
-  <img src='images/gcc_phat_diff_window.png'>
+## Framework
+<div align=center>
+<img src='images/framework-gcc-phat.png' width=50%>
+</div>
 
-when limiting delay within [-18,18] samples, difference may be litle
+## Cue extractor
+
+### Influence of window function
+  <div align=center>
+  <img src='images/gcc_phat_diff_window.png'>
+  </div>
+
+when limiting delay(samples) within [-18,18], difference may be litle
+
+  <div align=center>
   <img src='images/gcc_phat_diff_window_range_limited.png'>
+  </div>
+
+
 
 ### normalization
 
@@ -45,17 +60,15 @@ Evaluation results are not stable across trials, so evluations are performed 4 t
       <td>baseline in [^Vecchiotti_2019] </td><td>2.7</td><td>3.3</td><td>3.1</td><td>5.2</td>
     </tr>
     <tr>
-      <td>separate_norm</td><td><strong>0.86</strong></td><td><strong>1.41</strong></td><td><strong>1.85</strong></td><td><strong>3.94</strong></td>
+      <td>separate_norm</td><td><strong>0.54</strong></td><td><strong>1.60</strong></td><td><strong>1.14</strong></td><td><strong>3.34</strong></td>
     </tr>
     <tr>
-      <td>overal_norm</td><td>0.90</td><td>1.61</td><td>2.04</td><td>3.94</td>
+      <td>overall_norm</td><td>0.59</td><td>1.70</td><td>1.13</td><td>3.34</td>
     </tr>
   </tbody>
   </table>
 
   <img src='images/rmse_diff_norm.png'>
-
-
 
  **Separate_norm actually outperform overall_norm**, which is not expected.
 

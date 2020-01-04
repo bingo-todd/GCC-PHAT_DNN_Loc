@@ -20,7 +20,7 @@ fig = plot_tools.plot_bar((rmse_1d_mean,rmse_1d_std),
                           (rmse_37d_mean,rmse_37d_std),
                           legend=['overal_norm','sep_norm'],
                           xticklabels=room_list,
-                          xlabel='Room',ylabel=('RMSE($^o$)'),ylim=[0,5)
-legend = fig.get_axes()[0].get_legend()
-legend._set_loc(2)
+                          xlabel='Room',ylabel=('RMSE($^o$)'),ylim=[0,5])
+# legend = fig.get_axes()[0].get_legend()
+# legend._set_loc(2)
 plot_tools.savefig(fig,name='rmse_diff_norm.png')
