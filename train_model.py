@@ -4,7 +4,6 @@ import configparser
 from LocDNN import LocDNN
 from utils import file_reader
 
-
 room_all = ['Anechoic', 'A', 'B', 'C', 'D']
 reverb_room_all = ['A', 'B', 'C', 'D']
 

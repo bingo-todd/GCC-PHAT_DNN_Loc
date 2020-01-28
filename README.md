@@ -1,67 +1,98 @@
 ## GCC-PHAT based DNN localization method
 baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM*[^Vecchiotti_2019]
 
-### The influence of windows in GCC-PHAT
+## Framework
 
-  <img src='images/gcc_phat_diff_window.png'>
+<img src='images/model/framework-gcc-phat.png'>
 
-when limiting delay within [-18,18] samples, difference may be litle
-  <img src='images/gcc_phat_diff_window_range_limited.png'>
+## Dataset
+  Binarual signal are synthesized using BRIRs.
 
-### normalization
+  - BRIRs
 
-  The DNN model takes GCC-PHAT as input feature, feature need to be amplitude normalized before feeding into DNN. There are two types of normalization basing on whether features are considered as whole or not:
-  -  **Separate normalization**: each dimension is normalized separately
-  -  **Overall normalization**: all dimensions are normalized with the same factor
+    Surrey binaural room impulse response (BRIR) database, including anechoic room and 4 reverberation room.
+    <img src='images/dataset/rt-of-brir-dataset.png'>
 
-E.g. (sound source is located in the left)
+  - Sound source
 
+    TIMIT sentences
+
+    Sentences per azimuth
+    <table style='text-align:center'>
+    <col width=15%>
+    <col width=15%>
+    <col width=15%>
+      <tr>
+        <td>Train</td> <td>Validate</td> <td>Evaluate</td>
+      </tr>
+      <tr>
+        <td>24</td> <td>6</td> <td>15</td>
+      </tr>
+    </table>
+
+## Cue extractor
+
+  Normally, features are normalized before being fed into network.  If each dimension of features is independent variable, then normalization is applied to each dimension separately. For GCC-PHAT, what matters is the peak position, in other words, the relative value of each dimension, the same normalization coefficient should be used.
+
+  Two types of normalization are tested here:
+  -  **separate_norm**: each dimension is normalized separately
+  -  **overall_norm**: all dimensions are normalized with the same factor
+
+  E.g.
   | separate_norm  | overall_norm |
   |-|-|
-  | <img src='images/separate_norm.png'> | <img src='images/overall_norm.png'> |
+  | <img src='images/dataset/separate_norm_example.png'> | <img src='images/dataset/overall_norm_example.png'> |
 
-  For GCC-PHAT, the location information is implied in relative amplitude relation, it is overall normalization that make sense.
+## Model training
 
-### Performance
+### Multiconditional training(MCT)
 
-In paper(Vecchiotti et al., 2019), localization result was reported every 25 frames, which was called 1 chunk. Since DNN outputs the posterior of sound azimuth, in 1 chunk, DNN outputs are averaged across frames, the final sound located by maximizing.
-
-Evaluation results are not stable across trials, so evluations are performed 4 times using separate test dataset.
-
- Mean RMSE is listed as bellow:
-  <table align=center>
-    <thead>
-      <tr>
-        <th></th>
-        <th>method</th>
-        <th>A</th>
-        <th>B</th>
-        <th>C</th>
-        <th>D</th>
-      </tr>
-    </thead>
-  <tbody>
+  Each time, 1 reverberant room was selected in turn and using in evaluation, the other 3 reverberant rooms and the anechoic room were used in model training.
+  <table>
     <tr>
-      <td rowspan=3> RMSE </td>
-      <td>baseline in [^Vecchiotti_2019] </td><td>2.7</td><td>3.3</td><td>3.1</td><td>5.2</td>
+      <th>separate_norm</th> <th>overall_norm</th>
     </tr>
     <tr>
-      <td>separate_norm</td><td><strong>0.9</strong></td><td><strong>1.2</strong></td><td><strong>1.6</strong></td><td><strong>3.1</strong></td>
+      <th> <img src='images/training/train_process_mct_37dnorm.png'> </th> <th> <img src='images/training/train_process_mct_1dnorm.png'> </th>
     </tr>
-    <tr>
-      <td>overal_norm</td><td>1.1</td><td>1.4</td><td>1.8</td><td>3.2</td>
-    </tr>
-  </tbody>
   </table>
 
-  <img src='images/chunk_rmse_result.png'>
 
+### Evaluation
 
+  Localization result was reported every 25 frames, considering the existence of silent frames. The RMSE of sound azimuth is used as performance metrics. For more stable result, evaluation is ran on 4 different test sets and RMSEs are averaged (not in the ref. paper).
 
- **Separate_norm actually outperform overall_norm**, which is not expected.
+   <div align=center>
+    <table style="text-align:center">
+      <col width=20%>
+      <col width=20%>
+      <col width=20%>
+      <col width=20%>
+      <col width=20%>
+      <thead>
+        <tr>
+          <th></th>
+          <th>A</th>
+          <th>B</th>
+          <th>C</th>
+          <th>D</th>
+        </tr>
+      </thead>
+    <tbody>
+      <tr>
+        <td> Paper </td><td>2.7</td><td>3.3</td><td>3.1</td><td>5.2</td>
+      </tr>
+      <tr>
+        <td>Separate_norm</td><td><strong>0.9</strong></td><td><strong>1.2</strong></td><td><strong>1.6</strong></td><td><strong>3.1</strong></td>
+      </tr>
+      <tr>
+        <td>overall_norm</td><td>1.1</td><td>1.4</td><td>1.8</td><td>3.2</td>
+      </tr>
+    </tbody>
+    </table>
+    </div>
 
- Frame based RMSE
- <img src='images/frame_rmse_result.png'>
+  **Separate_norm actually outperform overall_norm**, which is not expected.
 
 ## Reference
 [^Vecchiotti_2019]: Vecchiotti, Paolo, Ning Ma, Stefano Squartini, and Guy J. Brown. “END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM.” In 2019 IEEE INTERNATIONAL CONFERENCE ON ACOUSTICS, SPEECH AND SIGNAL PROCESSING (ICASSP), 451–55. International Conference on Acoustics Speech and Signal Processing ICASSP. 345 E 47TH ST, NEW YORK, NY 10017 USA: IEEE, 2019.

@@ -5,6 +5,10 @@ import sys
 my_modules_dir = os.path.join(os.path.expanduser('~'), 'my_modules')
 sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
 from get_fpath import get_fpath  # noqa 402
+import plot_tools  # noqa: E402
+
+
+reverb_room_all = ['A', 'B', 'C', 'D']
 
 
 def file_reader(dataset_dir, norm_params_fpath, batch_size=-1,
