@@ -3,16 +3,14 @@ import os
 import time
 import matplotlib.pyplot as plt
 import tensorflow as tf
+# suppress the log print of tensorflow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import configparser  # noqa 402
-import sys  # noqa 402
+import configparser  # noqa: E402
+import sys  # noqa: E402
 
-import os  # noqa 402
-import sys  # noqa 402
 my_modules_dir = os.path.expanduser('~/my_modules')
 sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
-import TFData  # noqa 402
-from get_fpath import get_fpath  # noqa 402
+from get_fpath import get_fpath  # noqa: E402
 
 
 class LocDNN(object):

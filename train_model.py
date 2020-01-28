@@ -2,7 +2,9 @@ import os
 import sys
 import configparser
 from LocDNN import LocDNN
-from utils import file_reader
+
+sys.path.append('utils')
+from file_reader import file_reader  # noqa: E402
 
 room_all = ['Anechoic', 'A', 'B', 'C', 'D']
 reverb_room_all = ['A', 'B', 'C', 'D']
