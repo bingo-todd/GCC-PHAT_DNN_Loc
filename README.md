@@ -11,7 +11,17 @@ baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM
   - BRIRs
 
     Surrey binaural room impulse response (BRIR) database, including anechoic room and 4 reverberation room.
-    <img src='images/dataset/rt-of-brir-dataset.png'>
+    <table style='text-align:center'>
+    <tr>
+      <td>Room</td> <td>A</td> <td>B</td> <td>C</td> <td>D</td>
+    </tr>
+    <tr>
+      <td>RT_60(s)</td> <td>0.32</td> <td>0.47</td> <td>0.68</td> <td>0.89</td>
+    </tr>
+    <tr>
+      <td>DDR(dB)</td> <td>6.09</td> <td>5.31</td> <td>8.82</td> <td>6.12</td>
+    </tr>
+    </table>
 
   - Sound source
 

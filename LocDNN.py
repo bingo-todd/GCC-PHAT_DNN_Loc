@@ -1,21 +1,15 @@
 import numpy as np
-import os
 import time
 import matplotlib.pyplot as plt
 import tensorflow as tf
-# suppress the log print of tensorflow
+import configparser
+import os
+import sys
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import configparser  # noqa: E402
-import sys  # noqa: E402
-
-my_modules_dir = os.path.expanduser('~/my_modules')
-sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
-from get_fpath import get_fpath  # noqa: E402
 
 
 class LocDNN(object):
-    def __init__(self, file_reader, reader_args={},  config_fpath=None,
-                 gpu_index=0):
+    def __init__(self, file_reader, config_fpath=None, gpu_index=0):
 
         # constant member variables
         self.epsilon = 1e-20
@@ -50,7 +44,7 @@ class LocDNN(object):
             self.n_azi = np.int16(config['model']['n_azi'])
             self.fea_len = np.int16(config['model']['fea_len'])
             self.is_norm = config['model']['is_norm'] == 'True'
-            self.norm_params_fpath = config['model']['norm_params_fpath']
+            self.norm_coef_fpath = config['model']['norm_coef_fpath']
             self.is_dropout = config['model']['is_dropout'] == 'True'
             # training settings
             self.batch_size = np.int16(config['train']['batch_size'])
@@ -205,8 +199,10 @@ class LocDNN(object):
             print('start traning')
             for epoch in range(last_epoch+1, self.max_epoch):
                 t_start = time.time()
-                for x, y in self._file_reader(self.train_set_dir,
-                                              **self._reader_args):
+                batch_generator = self._file_reader(self.train_set_dir,
+                                                    self.norm_coef_fpath,
+                                                    self.batch_size)
+                for x, y in batch_generator:
                     self._sess.run(self._opt_step,
                                    feed_dict={self._x: x,
                                               self._y: y,
@@ -282,8 +278,8 @@ class LocDNN(object):
         rmse_all = 0.
         n_sample_all = 0.
 
-        for x, y in self._file_reader(set_dir, is_shuffle=False,
-                                      **self._reader_args):
+        batch_generator = self._file_reader(set_dir, self.norm_coef_fpath) 
+        for x, y in batch_generator:
             n_sample_tmp = x.shape[0]
             cost_tmp, rmse_tmp = self._sess.run([self._cost, self._azi_rmse],
                                                 feed_dict={self._x: x,
@@ -306,8 +302,8 @@ class LocDNN(object):
         """
         rmse_chunk = 0.
         n_chunk = 0
-        for x, y in self._file_reader(data_set_dir, is_shuffle=False,
-                                      **self._reader_args):
+
+        for x, y in self._file_reader(data_set_dir, self.norm_coef_fpath):
             n_sample = x.shape[0]
             azi_true = np.argmax(y[0])
 

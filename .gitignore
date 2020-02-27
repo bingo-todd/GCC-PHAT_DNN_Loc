@@ -4,3 +4,6 @@ norm_params/
 pre_result/
 *.wav
 
+norm_params/
+models_pre/
+Result/

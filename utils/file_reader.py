@@ -2,32 +2,29 @@ import numpy as np
 import copy
 import os
 import sys
-my_modules_dir = os.path.join(os.path.expanduser('~'), 'my_modules')
-sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
-from get_fpath import get_fpath  # noqa 402
-import plot_tools  # noqa: E402
-
+from BascicTools get_fpath import get_fpath
 
 reverb_room_all = ['A', 'B', 'C', 'D']
 
-
-def file_reader(dataset_dir, norm_params_fpath, batch_size=-1,
-                is_shuffle=True):
+def file_reader(dataset_dir, norm_coef_fpath, batch_size=-1,is_shuffle=True):
     """Read spectrum files under given directory
     Args:
-        dataset_dir:
+        dataset_dir: string or list of strings
+        norm_coef_fpath: file path of normalization coefficients 
+        batch_size: if not specified, return the data of a file per time
+        is_shuffle: 
     Returns:
-        sample generator, [samples,label_onehots]
+        sample,label_onehot
     """
-    n_azi = 37
-    fea_len = 37
+    n_azi = 37 # number of sound position
+    fea_len = 37 # size of feature
 
     if isinstance(dataset_dir, list):
         dir_all = dataset_dir
     else:
         dir_all = [dataset_dir]
 
-    mean, std = np.load(norm_params_fpath)
+    mean, std = np.load(norm_coef_fpath) #
 
     fpath_all = []
     for dir_tmp in dir_all:
@@ -54,7 +51,7 @@ def file_reader(dataset_dir, norm_params_fpath, batch_size=-1,
         y_file_all = np.zeros((n_sample_tmp, n_azi))
         y_file_all[:, azi] = 1
 
-        if batch_size > 0:
+        if batch_size > 0: # 
             x_all = np.concatenate((x_all, x_file_all), axis=0)
             y_all = np.concatenate((y_all, y_file_all), axis=0)
             while(x_all.shape[0] > batch_size):
