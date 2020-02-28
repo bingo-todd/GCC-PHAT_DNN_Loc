@@ -15,7 +15,6 @@ class LocDNN(object):
         self.epsilon = 1e-20
 
         self._file_reader = file_reader
-        self._reader_args = reader_args
 
         # create graph and session
         self._graph = tf.Graph()
@@ -171,7 +170,6 @@ class LocDNN(object):
             ckpt = tf.train.get_checkpoint_state(model_dir)
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(self._sess, ckpt.model_checkpoint_path)
-
             print(f'load model from {model_dir}')
 
     def train_model(self, model_dir, is_load_model=False):

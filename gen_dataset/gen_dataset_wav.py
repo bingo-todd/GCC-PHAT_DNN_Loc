@@ -12,8 +12,8 @@ from BasicTools.get_fpath import get_fpath
 
 
 TIMIT_dir = os.path.expanduser('~/Work_Space/Data/TIMIT_wav')
-brirs_dir = 'brirs_aligned'
-data_dir = '../Data'
+brirs_dir = '../../Data/brirs_aligned'
+data_dir = '../../Data'
 
 room_all = ['Anechoic', 'Room_A', 'Room_B', 'Room_C', 'Room_D']
 n_room = 5
@@ -66,6 +66,13 @@ def syn_record(src_fpath_all, set_dir, n_wav_per_azi, task_i, pb):
         for azi_i in range(n_azi):
             for i in range(n_wav_per_azi):
                 pb.update(task_i)
+
+                reverb_fpath = os.path.join(rever_dir, f'{azi_i}_{i}.wav')
+                if os.path.exists(reverb_fpath):
+                    continue
+                else:
+                    raise Exception() 
+
                 src_fpath = src_fpath_all[wav_count]
                 wav_count = wav_count+1
 
@@ -96,6 +103,10 @@ def gen_dataset(dir_path, set_type_all):
                                   is_absolute=True)
         np.save('fpath_TIMIT_train_all.npy', src_fpath_all)
     src_fpath_all = np.load('fpath_TIMIT_train_all.npy')
+    n_src_fpath = len(src_fpath_all)
+    src_fpath_all = np.concatenate((src_fpath_all,
+                                    np.random.choice(src_fpath_all,
+                                                     n_wav_train+n_wav_valid-n_src_fpath)))
     print('train', len(src_fpath_all))
     print('train+valid', n_wav_train+n_wav_valid)
     np.random.shuffle(src_fpath_all)
@@ -105,10 +116,14 @@ def gen_dataset(dir_path, set_type_all):
     # test
     if not os.path.exists('fpath_TIMIT_test_all.npy'):
         TIMIT_test_dir = os.path.join(TIMIT_dir, 'TIMIT/TEST')
-        src_fpath_test_all = get_fpath(TIMIT_test_dir, '.wav', 
-                                  is_absolute=True)
-        np.save('fpath_TIMIT_test_all.npy', src_fpath_test_all)
-    src_fpath_test_all = np.load('fpath_TIMIT_test_all.npy')
+        src_fpath_all = get_fpath(TIMIT_test_dir, '.wav', 
+                                       is_absolute=True)
+        np.save('fpath_TIMIT_test_all.npy', src_fpath_all)
+    src_fpath_all = np.load('fpath_TIMIT_test_all.npy')
+    n_src_fpath = len(src_fpath_all)
+    src_fpath_test_all = np.concatenate((src_fpath_all,
+                                         np.random.choice(src_fpath_all,
+                                                          n_wav_test-n_src_fpath)))
     print('test', len(src_fpath_test_all))
     print('test', n_wav_test)
     np.random.shuffle(src_fpath_test_all)
@@ -121,6 +136,7 @@ def gen_dataset(dir_path, set_type_all):
                      src_fpath_test_all)
 
     n_wav_all = [len(src_fpath_all[i]) for i in range(len(set_type_all))]
+
     pb = ProcessBarMulti(n_wav_all, desc_all=set_type_all)
     proc_all = []
     for i, set_type in enumerate(set_type_all):

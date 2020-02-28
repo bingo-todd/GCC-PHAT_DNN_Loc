@@ -2,7 +2,7 @@ import numpy as np
 import copy
 import os
 import sys
-from BascicTools get_fpath import get_fpath
+from BasicTools import get_fpath
 
 reverb_room_all = ['A', 'B', 'C', 'D']
 

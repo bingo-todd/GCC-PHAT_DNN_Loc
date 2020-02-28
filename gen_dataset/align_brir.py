@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 """Align brirs of reverberant rooms to that from the anechoic room
 """
 
-brirs_dir = os.path.expanduser('~/Work_Space/Data/RealRoomBRIRs')
-brirs_aligned_dir = 'brirs_aligned'
-os.mkdir(brirs_aligned_dir, exist_ok=True)
+brirs_dir = os.path.expanduser('~/Work_Space/Data/RealRoomBRIRs-master')
+brirs_aligned_dir = '../../Data/brirs_aligned'
+os.makedirs(brirs_aligned_dir, exist_ok=True)
 
 n_azi = 37
 n_channel = 2

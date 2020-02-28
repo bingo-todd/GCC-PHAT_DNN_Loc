@@ -8,8 +8,8 @@ room_all = ['Anechoic', 'Room_A', 'Room_B', 'Room_C', 'Room_D']
 reverb_room_all = ['Room_A', 'Room_B', 'Room_C', 'Room_D']
 
 data_dir = os.path.expanduser('../Data')
-train_set_dir = os.path.join(data_dir, 'v1/GCC_PHAT/train')
-valid_set_dir = os.path.join(data_dir, 'v1/GCC_PHAT/valid')
+train_set_dir = os.path.join(data_dir, 'v1/GCC_PHAT/train/reverb')
+valid_set_dir = os.path.join(data_dir, 'v1/GCC_PHAT/valid/reverb')
 
 model_basic_settings = {'fea_len': 37,
                         'is_norm': 'True',
@@ -42,16 +42,15 @@ def train_mct(room_tar, model_dir, norm_coef_fpath):
 
     config_fpath = os.path.join(model_dir, 'config.cfg')
     with open(config_fpath, 'w') as config_file:
-        if config_file is None:
-            raise Exception('fail to create file')
         config.write(config_file)
 
-    model = LocDNN(file_reader, config_fpath, gpu_index)
-    model.train_model(model_dir)
+    # model = LocDNN(file_reader.file_reader, config_fpath, gpu_index)
+    # model.train_model(model_dir)
 
 
 if __name__ == '__main__':
-
-  for room_tar in reverb_room_all:    
-        model_dir = 'models/mct{}'.format(room_tar)
-        train_mct(room_tar, model_dir, norm_coef_fpath)
+      
+      room_tar = sys.argv[1]
+      model_dir = sys.argv[2]
+      norm_coef_fpath = sys.argv[3] 
+      train_mct(room_tar, model_dir, norm_coef_fpath)
