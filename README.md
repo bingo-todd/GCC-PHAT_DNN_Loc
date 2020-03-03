@@ -1,12 +1,12 @@
 ## GCC-PHAT based DNN localization method
-baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM*[^Vecchiotti_2019]
+Baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM*[^Vecchiotti_2019]
 
 ## Framework
 
 <img src='images/framework-gcc-phat.png'>
 
 ## Dataset
-  Binarual signal are synthesized using BRIRs.
+  Binaural signal are synthesized using BRIRs.
 
   - BRIRs
 
@@ -55,15 +55,15 @@ baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM
 
 ## Model training
 
-### Multiconditional training(MCT)
+### Multi-conditional training(MCT)
 
-  Each time, 1 reverberant room was selected in turn and using in evaluation, the other 3 reverberant rooms and the anechoic room were used in model training.
+Each time, 1 reverberant room was selected and using in evaluation, the other 3 reverberant rooms and the anechoic room were used in model training. 
   <table>
     <tr>
       <th>separate_norm</th> <th>overall_norm</th>
     </tr>
     <tr>
-      <th> <img src='images/training/train_process_mct_37dnorm.png'> </th> <th> <img src='images/training/train_process_mct_1dnorm.png'> </th>
+      <th> <img src='images/separate_norm_example.png'> </th> <th> <img src='images/overall_norm_example.png'> </th>
     </tr>
   </table>
 
@@ -102,7 +102,20 @@ baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM
     </table>
     </div>
 
+
+
+### Stability of model training
+
+For room D, model is trained 3 times. Even though similar losses are achieved, test results vary.
+
+mean:  3.39	std: 0.07
+
+<img src='example/multi-run/result.png'>s
+
+
+
 ## Main Dependencies
+
   - tensorflow-1.14
   - pysofa <https://github.com/bingo-todd/pySOFA>
   - BasicTools <https://github.com/bingo-todd/BasicTools>
@@ -110,8 +123,10 @@ baseline system in *END-TO-END BINAURAL SOUND LOCALISATION FROM THE RAW WAVEFORM
 
 ## Generate dataset
   1. Align BRIRs(Not necessary)
-    Align brirs of reverberant rooms to brirs of anechoic room.
-  2. Syntheize spatial recordings
+
+     Align BRIRs of reverberant rooms to BRIRs of anechoic room.
+
+  2. Synthesize spatial recordings
   3. Calculate GCC-PHAT features
   4. Calculate normalization coefficients of GCC-PHAT features
 

@@ -10,3 +10,4 @@ Result/
 norm_coef/
 gen_dataset/fpath_TIMIT_train_all.npy
 gen_dataset/fpath_TIMIT_test_all.npy
+example/multi-run/

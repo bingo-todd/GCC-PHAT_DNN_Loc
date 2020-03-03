@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import sys
-from LocDNN import LocDNN  
+from LocDNN import LocDNN
 from utils import file_reader
 
 data_dir_base = '../Data'
@@ -17,6 +17,9 @@ def evaluate_mct(model_dir):
     for room_i, room in enumerate(reverb_room_all):
         model_dir_room = os.path.join(model_dir, room)
         config_fpath = os.path.join(model_dir_room, 'config.cfg')
+        if not os.path.exists(config_fpath):
+            continue
+
         model = LocDNN(file_reader.file_reader, config_fpath, gpu_index)
         model.load_model(model_dir_room)
 
@@ -38,7 +41,8 @@ if __name__ == '__main__':
         result_file.write(f'{rmse_all}')
         result_file.write('mean: {}\n'.format(np.mean(rmse_all, axis=0)))
         result_file.write('std: {}\n'.format(np.std(rmse_all, axis=0)))
+    np.save(os.path.join(model_dir, 'result.npy'), rmse_all)
 
-    print('{}'.format(rmse_all))
+    print('{}\n'.format(rmse_all))
     print('mean: {}'.format(np.mean(rmse_all, axis=0)))
     print('std: {}'.format(np.std(rmse_all, axis=0)))

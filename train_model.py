@@ -1,3 +1,4 @@
+from multiprocessing import Process
 import os
 import sys
 import configparser
@@ -44,13 +45,17 @@ def train_mct(room_tar, model_dir, norm_coef_fpath):
     with open(config_fpath, 'w') as config_file:
         config.write(config_file)
 
-    # model = LocDNN(file_reader.file_reader, config_fpath, gpu_index)
-    # model.train_model(model_dir)
+    model = LocDNN(file_reader.file_reader, config_fpath, gpu_index)
+    model.train_model(model_dir)
 
 
 if __name__ == '__main__':
-      
-      room_tar = sys.argv[1]
-      model_dir = sys.argv[2]
-      norm_coef_fpath = sys.argv[3] 
-      train_mct(room_tar, model_dir, norm_coef_fpath)
+	thread_all = []
+	for room_tar in reverb_room_all:
+		model_dir = f'models_{test_i}/mct_37dnorm'
+		norm_coef_fpath = 'norm_coef/mct_Room_D_37d.npy'
+		thread = Process(target=train_mct, args=(room_tar, model_dir, norm_coef_fpath))
+		thread.start()
+		thread_all.append(thread)
+		
+	[thread.join() for thread in thread_all]

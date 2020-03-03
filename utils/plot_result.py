@@ -1,96 +1,46 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import os
+from matplotlib.ticker import MaxNLocator
 import sys
-my_modules_dir = os.path.join(os.path.expanduser('~'), 'my_modules')
-sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
-import plot_tools  # noqa: E402
-
-reverb_room_all = ['A', 'B', 'C', 'D']
-
-
-def plot_train_process(record_fpath, ax=None, label=None):
-
-    if ax is None:
-        fig, ax = plt.subplots(1, 2, figsize=[6, 4],
-                               sharex=True, tight_layout=True)
-    else:
-        fig = None
-
-    record_info = np.load(record_fpath)
-
-    #
-    cost_record_valid = record_info['cost_record_valid']
-    rmse_record_valid = record_info['azi_rmse_record_valid']
-    n_epoch = np.nonzero(cost_record_valid)[0][-1] + 1
-
-    plot_settings = {'label': label, 'linewidth': 2}
-    ax[0].plot(cost_record_valid[:n_epoch], **plot_settings)
-    ax[1].plot(rmse_record_valid[:n_epoch], **plot_settings)
-
-    ax[1].legend()
-
-    ax[0].set_ylabel('Cross entrophy')
-    ax[1].set_ylabel('RMSE')
-    ax[1].set_xlabel('Epoch(n)')
-    ax[1].set_xlabel('Epoch(n)')
-
-    return fig
-
-
-def plot_mct_train_process(model_dir):
-
-    reverb_room_all = ['A', 'B', 'C', 'D']
-    fig, ax = plt.subplots(1, 2, figsize=[6, 4], sharex=True,
-                           tight_layout=True)
-
-    for room_i, room in enumerate(reverb_room_all):
-        record_fpath = os.path.join(model_dir, room, 'train_record.npz')
-        plot_train_process(record_fpath, ax, label=room)
-    return fig
-
-
-def plot_evaluate_result(result_fpath_all, label_all):
-
-    mean_std_all = []
-    for result_fpath in result_fpath_all:
-        rmse_multi_test = np.load(result_fpath)
-        rmse_mean = np.mean(rmse_multi_test, axis=0)
-        rmse_std = np.std(rmse_multi_test, axis=0)
-        mean_std_all.append([rmse_mean, rmse_std])
-
-    fig = plot_tools.plot_bar(*mean_std_all, legend=label_all,
-                              xticklabels=reverb_room_all,
-                              xlabel='Room', ylabel='RMSE($^o$)',
-                              ylim=[0, 4])
-    return fig
-
-
-def plot_evaluation(result_fpath_all, legend_all):
-    mean_std_all = []
-    for result_fpath in result_fpath_all:
-        rmse_multi_test = np.load(result_fpath)
-
-        rmse_mean = np.mean(rmse_multi_test, axis=0)
-        rmse_std = np.std(rmse_multi_test, axis=0)
-        mean_std_all.append([rmse_mean, rmse_std])
-
-    fig = plot_tools.plot_bar(*mean_std_all, legend=legend_all,
-                              xticklabels=reverb_room_all,
-                              xlabel='Room', ylabel='RMSE($^o$)',
-                              ylim=[0, 4])
-    return fig
-
+import numpy as np
+from BasicTools import plot_tools
+plt.rcParams.update({"font.size": "12"})
+room_all = ['Anechoic', 'Room_A', 'Room_B', 'Room_C', 'Room_D']
+reverb_room_all = ['Room_A', 'Room_B', 'Room_C', 'Room_D']
+n_test = 3
 
 if __name__ == '__main__':
+    fig, ax = plt.subplots(1, 2, figsize=[6, 3], tight_layout=True)
+    plot_settings = {'linewidth': 2}
+    n_epoch_max = 0
 
-    if True:
-        mct_model_dir = 'models/mct_37dnorm'
-        fig = plot_mct_train_process(mct_model_dir)
-        plot_tools.savefig(fig, fig_name='train_process_mct_37dnorm.png',
-                           fig_dir='images/training')
+    model_dir_base = sys.argv[1]  # '../models/mct_37dnorm'
+    for room in reverb_room_all:
+        # learning curve
+        record_fpath = f'{model_dir_base}/{room}/train_record.npz'
+        record_info = np.load(record_fpath)
+        cost_record_valid = record_info['cost_record_valid']
+        n_epoch = np.nonzero(cost_record_valid)[0][-1] + 1
+        if n_epoch > n_epoch_max:
+            n_epoch_max = n_epoch
+        ax[0].plot(cost_record_valid[:n_epoch], **plot_settings,
+                   label=room[-1])
 
-        mct_model_dir = 'models/mct_1dnorm'
-        fig = plot_mct_train_process(mct_model_dir)
-        plot_tools.savefig(fig, fig_name='train_process_mct_1dnorm.png',
-                           fig_dir='images/training')
+    # rmse
+    rmse_all = np.load(f'{model_dir_base}/result.npy')
+    rmse_mean_all = np.mean(rmse_all, axis=0)
+    rmse_std_all = np.std(rmse_all, axis=0)
+
+    ax[0].xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax[0].legend()
+    ax[0].set_ylabel('Cross entrophy')
+    ax[0].set_xlabel('Epoch(n)')
+    ax[0].set_title('Learning Curve')
+
+    ax[1].bar([room[-1] for room in reverb_room_all], rmse_mean_all,
+              yerr=rmse_std_all/np.sqrt(n_test))
+    plt.xticks(rotation=45)
+    ax[1].set_xlabel('Room')
+    ax[1].set_ylabel('RMSE')
+    ax[1].set_title('Test')
+    man_std = [[rmse_mean_all[i], rmse_std_all[i]] for i in range(4)]
+    plot_tools.savefig(fig, 'result.png', model_dir_base)
