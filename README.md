@@ -115,7 +115,7 @@ mean:  3.39	std: 0.07
 
 
 ## Main Dependencies
-
+  - python 3
   - tensorflow-1.14
   - pysofa <https://github.com/bingo-todd/pySOFA>
   - BasicTools <https://github.com/bingo-todd/BasicTools>
