@@ -1,13 +1,8 @@
+import os
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-import sys
-my_modules_dir = os.path.expanduser('~/my_modules')
-sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
-import gcc  # noqa: E402
-import plot_tools  # noqa: E402
-import wav_tools  # noqa: E402
-from get_fpath import get_fpath  # noqa: E402
+from BasicTools import plot_tools
+from BasicTools.get_file_path import get_file_path
 
 
 def file_reader(data_dir):
@@ -23,7 +18,7 @@ def file_reader(data_dir):
         dir_list = [data_dir]
 
     for sub_set_dir in dir_list:
-        fea_fpath_list = get_fpath(sub_set_dir, '.npy')
+        fea_fpath_list = get_file_path(sub_set_dir, '.npy')
         for fea_fpath in fea_fpath_list:
             fea_fpath_abs = os.path.join(sub_set_dir, fea_fpath)
             fea = np.load(fea_fpath_abs)

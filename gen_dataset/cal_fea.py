@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from multiprocessing import Pool
-import warnings
 import os
-from BasicTools import plot_tools, wav_tools, get_fpath, ProcessBar, gcc
+from BasicTools import wav_tools, get_file_path, ProgressBar, gcc
 
 
 data_dir_base = '../../Data'
@@ -24,17 +22,17 @@ def cal_fea(record_dir, fea_dir):
     if not os.path.exists(record_dir):
         os.makedirs(record_dir)
 
-    wav_fpath_all = get_fpath(dir_path=record_dir, suffix='.wav',
-                              pattern='reverb')
+    wav_fpath_all = get_file_path(dir_path=record_dir, suffix='.wav',
+                                  pattern='reverb')
 
-    pb = ProcessBar(max_value=len(wav_fpath_all),
-                    title=f'GCC_PHAT {record_dir}')
+    pb = ProgressBar(max_value=len(wav_fpath_all),
+                     title=f'GCC_PHAT {record_dir}')
     pool = Pool(24)
     for wav_fpath in wav_fpath_all:
         fea_fpath = os.path.join(fea_dir, '{}.npy'.format(wav_fpath[:-4]))
         if os.path.exists(fea_fpath):
-        	# warnings.warn(f'{fea_fpath} exists!')
-        	continue
+            # warnings.warn(f'{fea_fpath} exists!')
+            continue
 
         data, fs = wav_tools.read_wav(os.path.join(record_dir, wav_fpath))
         frame_all = wav_tools.frame_data(data, frame_len=320, shift_len=160)

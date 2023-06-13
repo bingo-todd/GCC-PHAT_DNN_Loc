@@ -7,7 +7,7 @@ import os
 from multiprocessing import Process
 from BasicTools import ProgressBarMulti
 from BasicTools import wav_tools
-from BasicTools.Filter_GPU import Filter_GPU
+from BasicTools.GPU_Filter import GPU_Filter
 from BasicTools.get_file_path import get_file_path
 
 
@@ -52,7 +52,7 @@ def syn_record(src_fpath_all, set_dir, n_wav_per_azi, task_i, pb):
     """synthesize spatial recordings as well corresponding direct sound for
     each set
     """
-    filter_gpu = Filter_GPU(gpu_index=1)
+    filter_gpu = GPU_Filter(gpu_index=1)
 
     brirs_direct = load_brirs('Anechoic')
     wav_count = 0

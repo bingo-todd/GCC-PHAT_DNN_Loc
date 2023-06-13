@@ -1,13 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import os
-import sys
-my_modules_dir = os.path.expanduser('~/my_modules')
-sys.path.append(os.path.join(my_modules_dir, 'basic_tools/basic_tools'))
-import wav_tools  # noqa: E402
-import gcc  # noqa: E402
-import plot_tools  # noqa: E402
+from BasicTools import wav_tools, gcc, plot_tools
 
 
 if __name__ == '__main__':

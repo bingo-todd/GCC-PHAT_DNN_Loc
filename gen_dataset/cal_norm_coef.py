@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from multiprocessing import Pool
-import warnings
 import os
-from BasicTools import plot_tools, wav_tools, get_fpath, ProcessBar, gcc
+from BasicTools import plot_tools, get_file_path
 
 
 data_dir_base = '../../Data'
@@ -24,7 +22,7 @@ def file_reader(data_dir):
         dir_list = [data_dir]
 
     for sub_set_dir in dir_list:
-        fea_fpath_list = get_fpath(sub_set_dir, '.npy')
+        fea_fpath_list = get_file_path(sub_set_dir, '.npy')
         for fea_fpath in fea_fpath_list:
             fea_fpath_abs = os.path.join(sub_set_dir, fea_fpath)
             fea = np.load(fea_fpath_abs)
@@ -67,7 +65,7 @@ if __name__ == "__main__":
         dataset_room_dir_all = [os.path.join(dataset_dir, room)
                                 for room in mct_room_all]
         [[mean_1d, std_1d],
-        [mean_37d, std_37d]] = cal_norm_coef(dataset_room_dir_all)
+         [mean_37d, std_37d]] = cal_norm_coef(dataset_room_dir_all)
 
         param_name = 'mct_{}'.format(room_tar)
         # np.save(os.path.join(norm_param_dir, '{}_37d.npy'.format(param_name)),
