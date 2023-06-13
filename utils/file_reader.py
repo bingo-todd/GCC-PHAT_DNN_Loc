@@ -1,34 +1,34 @@
 import numpy as np
 import copy
 import os
-import sys
-from BasicTools import get_fpath
+from BasicTools import get_file_path
 
 reverb_room_all = ['A', 'B', 'C', 'D']
 
-def file_reader(dataset_dir, norm_coef_fpath, batch_size=-1,is_shuffle=True):
+
+def file_reader(dataset_dir, norm_coef_fpath, batch_size=-1, is_shuffle=True):
     """Read spectrum files under given directory
     Args:
         dataset_dir: string or list of strings
-        norm_coef_fpath: file path of normalization coefficients 
+        norm_coef_fpath: file path of normalization coefficients
         batch_size: if not specified, return the data of a file per time
-        is_shuffle: 
+        is_shuffle:
     Returns:
         sample,label_onehot
     """
-    n_azi = 37 # number of sound position
-    fea_len = 37 # size of feature
+    n_azi = 37  # number of sound position
+    fea_len = 37  # size of feature
 
     if isinstance(dataset_dir, list):
         dir_all = dataset_dir
     else:
         dir_all = [dataset_dir]
 
-    mean, std = np.load(norm_coef_fpath) #
+    mean, std = np.load(norm_coef_fpath)
 
     fpath_all = []
     for dir_tmp in dir_all:
-        fpath_all_tmp = get_fpath(dir_tmp, suffix='.npy', is_absolute=True)
+        fpath_all_tmp = get_file_path(dir_tmp, suffix='.npy', is_absolute=True)
         fpath_all.extend(fpath_all_tmp)
 
     if is_shuffle:
@@ -51,7 +51,7 @@ def file_reader(dataset_dir, norm_coef_fpath, batch_size=-1,is_shuffle=True):
         y_file_all = np.zeros((n_sample_tmp, n_azi))
         y_file_all[:, azi] = 1
 
-        if batch_size > 0: # 
+        if batch_size > 0:
             x_all = np.concatenate((x_all, x_file_all), axis=0)
             y_all = np.concatenate((y_all, y_file_all), axis=0)
             while(x_all.shape[0] > batch_size):

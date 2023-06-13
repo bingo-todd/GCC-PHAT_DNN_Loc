@@ -3,7 +3,7 @@ import os
 import sys
 import configparser
 from LocDNN import LocDNN
-from utils import file_reader 
+from utils import file_reader
 
 room_all = ['Anechoic', 'Room_A', 'Room_B', 'Room_C', 'Room_D']
 reverb_room_all = ['Room_A', 'Room_B', 'Room_C', 'Room_D']
@@ -57,5 +57,5 @@ if __name__ == '__main__':
 		thread = Process(target=train_mct, args=(room_tar, model_dir, norm_coef_fpath))
 		thread.start()
 		thread_all.append(thread)
-		
+
 	[thread.join() for thread in thread_all]
